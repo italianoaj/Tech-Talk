@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Tech Talk</title>
+		<link rel="stylesheet" href="css/chat-style.css">
+		<script>
+			var cr;
+			var mess;
+			var time;
+			
+			window.onload = init;
+		
+			function init(){
+				cr=document.getElementById("chat-room");
+				mess=document.getElementById("message");
+				console.log(window.screen.width);
+				mess.style.width=window.screen.width-30+"px";
+                welcome();
+			}
+            
+            function welcome(){
+                var suffix;
+				var prefix;
+				time = new Date();
+				if(time.getMinutes()<10){
+					prefix="0";
+				}else{
+					prefix="";
+				}
+				if(time.getHours()<12){
+					suffix="am";
+				}else{
+					suffix="pm";
+				}
+                cr.innerHTML+="<div class='container darker'><p>Administrator-Bot</p><img id='admin' src='img/adminbot.jpg' alt='avatar' style='float: left; max-width: 60px; width: 100%; margin-right: 20px; border-radius: 50%;'><p>Welcome to the Chatroom!</p><span class='time-left'>"+time.getHours()+":"+prefix+time.getMinutes()+""+suffix+"</span></div>"
+            }
+
+			function send(form){
+				var suffix;
+				var prefix;
+				time = new Date();
+				if(time.getMinutes()<10){
+					prefix="0";
+				}else{
+					prefix="";
+				}
+				if(time.getHours()<12){
+					suffix="am";
+				}else{
+					suffix="pm";
+				}
+				cr.innerHTML+="<div class='container'><p>Me</p><img id='user' src='img/user.png' alt='avatar' style='float: right; max-width: 60px; width: 100%; margin-left: 20px; margin-right: 0px; border-radius: 50%;'><p>"+mess.value+"</p><span class='time-right'>"+time.getHours()+":"+prefix+time.getMinutes()+""+suffix+"</span></div>";
+			}
+            
+            function help(){
+                var suffix;
+				var prefix;
+				time = new Date();
+				if(time.getMinutes()<10){
+					prefix="0";
+				}else{
+					prefix="";
+				}
+				if(time.getHours()<12){
+					suffix="am";
+				}else{
+					suffix="pm";
+				}
+				cr.innerHTML+="<div class='container darker'><p>Administrator-Bot</p><img id='admin' src='img/adminbot.jpg' alt='avatar' style='float: left; max-width: 60px; width: 100%; margin-right: 20px; border-radius: 50%;'><p>You can type a message to the group in the space provided below. You can then send the message by clicking the send button. Beep-Boop-Beep *insert other helpful information here.</p><span class='time-left'>"+time.getHours()+":"+prefix+time.getMinutes()+""+suffix+"</span></div>";
+            }
+                
+
+		</script>
+	</head>
+	<body>
+		<div class="navbar">
+          <a href="#home">Tech Talk</a>
+          <a href="#news">Logout</a>
+          <div class="dropdown">
+            <button class="dropbtn">Links 
+              <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="#">About</a>
+              <a href="#">Settings</a>
+              <a href="#">Contact</a>
+            </div>
+          </div> 
+            <p>Instant Messenging for Hiram CPSC Students</p>
+        </div>
+		<div id="chat-room">
+		</div>
+		<br><br><br>
+		<div id="message-form">
+			<form action="https://cs.hiram.edu/~italianoaj/rest/" method="POST">
+				<textarea id="message" rows="8"  placeholder="Type your message here..."></textarea>
+                <!--<button type="sumbit">Send</button>-->
+				<input type="button" value="SEND" onclick="send(this.form); this.form.reset();">
+                <input type="button" value="HELP" onclick="help();">
+			</form>
+		</div>
+	</body>
+</html>
