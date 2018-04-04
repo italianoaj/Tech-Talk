@@ -33,6 +33,7 @@
             var retry;
             var mf;
             var login
+            var permUser;
 			
 			window.onload = init;
 		
@@ -71,19 +72,20 @@
                 req.open("POST", "https://cs.hiram.edu/~italianoaj/rest/login");
                 req.addEventListener("load", access);
                 var obj = {"username":user.value,"password":pass.value};
-                req.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+                permUser=user.value;
+                req.setRequestHeader("Content-Type", "application/json");
                 console.log(JSON.stringify(obj));
                 req.responseType="json";
-                req.send(obj);
+                req.send(JSON.stringify(obj));
             }
 
 			function send(form){
 				req=new XMLHttpRequest();
                 req.open("POST", "https://cs.hiram.edu/~italianoaj/rest/sendMessage");
                 req.addEventListener("load", messageSent);
-                var obj = {"username":"italianoaj", "message":mess.value};
+                var obj = {"username":permUser, "message":mess.value};
                 console.log(obj);
-                req.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+                req.setRequestHeader("Content-Type","application/json");
                 req.responseType="json";
                 req.send(JSON.stringify(obj));
 			}
@@ -91,8 +93,8 @@
             function access(){
                 console.log("hello");
                 if(req.response.login==true){
-                    login.style.visibility="hidden";
-                    retry.style.visibility="hidden";
+                    login.style.display="none";
+                    retry.style.display="none";
                     cr.style.visibility="visible";
                     mf.style.visibility="visible";
                 }else{
@@ -106,7 +108,7 @@
             function messageSent(){
                 console.log("got back data");
                 console.log(req.response);
-                cr.innerHTML+="<div class='container'><p>"+req.response.username+"</p><img id='user' src='img/user.png' alt='avatar' style='float: right; max-width: 60px; width: 100%; margin-left: 20px; border-radius: 50%;'><p>"+req.response.message+"</p><span class='time-right'>"+req.response.time+"</span></div>";
+                cr.innerHTML+="<div class='container'><p>"+permUser+"</p><img id='user' src='img/user.png' alt='avatar' style='float: right; max-width: 60px; width: 100%; margin-left: 20px; border-radius: 50%;'><p>"+req.response.message+"</p><span class='time-right'>"+req.response.time+"</span></div>";
             }
             
             function help(){

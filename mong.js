@@ -5,8 +5,9 @@ var express = require("express");
 var app = express();
 var db;
 var bodyParser=require('body-parser');
-app.use(bodyParser.urlencoded({extended:false}));
-//app.use(bodyParser.json())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended:true}));
+
 
 
 app.get('/', (req,res) => {
@@ -66,7 +67,7 @@ app.post('/login', (req, res) => {
     }
     var sent=time.getHours()+":"+prefix+time.getMinutes()+""+suffix;
     var username='admin';
-    var passsword='Welcome123';
+    var password='Welcome123';
     console.log("login attempt made at "+sent);
     console.log(req.body);
     if(req.body.username==username && req.body.password==password){
@@ -75,7 +76,7 @@ app.post('/login', (req, res) => {
         res.send(JSON.stringify(obj));
     }else{
         console.log("login attempt failed");
-        var obj={"login":true};
+        var obj={"login":false};
         res.send(JSON.stringify(obj));
     }
 });
