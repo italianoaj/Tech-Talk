@@ -22,6 +22,9 @@
                 visibility:visible;
                 color:navy;
             }
+            #logout{
+                visibility:hidden;
+            }
         </style>
 		<script>
 			var cr;
@@ -34,9 +37,10 @@
             var mf;
             var login
             var permUser;
+            var count;
+            var logout;
 			
 			window.onload = init;
-            window.setInterval(getMessages, 1000);
 		
 			function init(){
 				cr=document.getElementById("chat-room");
@@ -48,6 +52,8 @@
 				mess.style.width=window.screen.width-30+"px";
                 user=document.getElementById("username");
                 pass=document.getElementById("password");
+                logout=document.getElementById("logout");
+                count=0;
                 welcome();
 			}
             
@@ -107,24 +113,27 @@
 			}
             
             function getMessages(){
-                console.log("asking for messages");
                 req=new XMLHttpRequest();
                 req.open("GET", "https://cs.hiram.edu/~italianoaj/rest/messages");
                 req.addEventListener("load", displayMessages);
                 req.setRequestHeader("Content-Type","application/json");
-                
                 req.responseType="json";
                 req.send();
             }
             
             function displayMessages(){
-                for(var i=0; i<req.response.testMessages.length; i++){
+                if (count==req.response.testMessages.length){
+                    return;
+                }
+                for(var i=count; i<req.response.testMessages.length; i++){
                     if(req.response.testMessages[i].username==permUser){
+                        cr.innerHTML+="<div class='container'><p>"+req.response.testMessages[i].username+"</p><img id='user' src='img/user.png' alt='avatar' style='float: right; max-width: 60px; width: 100%; margin-left: 20px; border-radius: 50%;'><p>"+req.response.testMessages[i].message+"</p><span class='time-right'>"+req.response.testMessages[i].time+"</span></div>";
                         continue;
                     }else{
-                        console.log(req.response.testMessages.message);
+                        cr.innerHTML+="<div class='container darker'><p>"+req.response.testMessages[i].username+"</p><img id='user' src='img/user.png' alt='avatar' style='float: left; max-width: 60px; width: 100%; margin-right: 20px; border-radius: 50%;'><p>"+req.response.testMessages[i].message+"</p><span class='time-left'>"+req.response.testMessages[i].time+"</span></div>"
                     }
                 }
+                count=req.response.testMessages.length;
             }
             
             function access(){
@@ -134,7 +143,10 @@
                     retry.style.display="none";
                     cr.style.visibility="visible";
                     mf.style.visibility="visible";
+                    logout.style.visibility="visible";
+                    window.setInterval(getMessages, 1000);
                 }else{
+                    logout.style.visibility="hidden";
                     login.style.visibility="visible";
                     retry.style.visibility="visible";
                     cr.style.visibility="hidden";
@@ -145,7 +157,6 @@
             function messageSent(){
                 console.log("got back data");
                 console.log(req.response);
-                cr.innerHTML+="<div class='container'><p>"+permUser+"</p><img id='user' src='img/user.png' alt='avatar' style='float: right; max-width: 60px; width: 100%; margin-left: 20px; border-radius: 50%;'><p>"+req.response.message+"</p><span class='time-right'>"+req.response.time+"</span></div>";
             }
             
             function help(){
@@ -168,7 +179,8 @@
 	</head>
 	<body>
 		<div class="navbar">
-            <a href="#home" onclick="location.reload();">Tech Talk</a>
+            <a href="">Tech Talk</a>
+            <a id="logout" href="" onclick="location.reload();"> logout</a>
             <p>Instant Messenging for Hiram CPSC Students</p>
         </div>
         <br>
@@ -182,15 +194,7 @@
         <div id="retry">
             <p>Try that again<p>
         </div>
-		<div id="chat-room">
-            <% for(var i=0; i<testMessages.length; i++) { %>
-                <div class='container darker'>
-                    <p><%= testMessages[i].username%></p>
-                    <img id='user' src='img/user.png' alt='avatar' style='float: left; max-width: 60px; width: 100%; margin-right: 20px; border-radius: 50%;'>
-                    <p><%= testMessages[i].message %></p>
-                    <span class ='time-left'><%= testMessages[i].time %></span>
-                </div>
-             <% } %>            
+		<div id="chat-room">   
 		</div>
 		<br><br><br>
 		<div id="message-form">

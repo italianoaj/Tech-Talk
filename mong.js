@@ -8,13 +8,11 @@ var bodyParser=require('body-parser');
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
-
+var users = [{"username":"admin", "password":"Welcome123"}, {"username":"bowsera","password":"0000"}, {"username":"wojtowiczak","password":"0001"}, {"username":"italianoaj","password":"Ant@Ita1"}, {"username":"barbianbm","password":"0002"}, {"username":"rozalskiji","password":"0003"}, {"username":"whitekj","password":"0004"}, {"username":"hendersonl","password":"0005"}, {"username":"oliphantlt","password":"0006"}, {"username":"ikedam","password":"0007"}, {"username":"bountsebese","password":"0008"}, {"username":"nouafowankosj","password":"0009"}, {"username":"topaliant","password":"0010"}, {"username":"martinjakozd","password":"0011"}];
 
 
 app.get('/', (req,res) => {
-     db.collection('testMessages').find().toArray(function(err, results) {
-          res.render('index.ejs', {testMessages: results});
-    });
+    res.render('index.ejs');
 });
 
 
@@ -57,20 +55,20 @@ app.post('/login', (req, res) => {
         suffix="pm";
     }
     var sent=time.getHours()+":"+prefix+time.getMinutes()+""+suffix;
-    var username='admin';
-    var password='Welcome123';
-    var buser='louis'
-    console.log("login attempt made at "+sent);
-    console.log(req.body);
-    if((req.body.username==username && req.body.password==password) || (req.body.username==buser && req.body.password==password)){
-        console.log("login attempt successful");
-        var obj={"login":true};
-        res.send(JSON.stringify(obj));
-    }else{
-        console.log("login attempt failed");
-        var obj={"login":false};
-        res.send(JSON.stringify(obj));
+    for (var i=0; i<users.length; i++){
+        if(req.body.username==users[i].username && req.body.password==users[i].password){
+            console.log("login attempt successful");
+            var obj={"login":true};
+            res.send(JSON.stringify(obj));
+            res.end();
+        }  
     }
+    if(obj){
+        return;
+    }
+    console.log("login attempt failed");
+    var obj={"login":false};
+    res.send(JSON.stringify(obj));
 });
 
 MongoClient.connect('mongodb://localhost:27017', (err, client) => {
