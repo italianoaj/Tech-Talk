@@ -6,7 +6,7 @@
         <meta name="description" content="chat room">
         <meta name="keywords" content="Hiram, College, Chat, Tech, Talk, Tech Talk, Italiano">
         
-		<title>HC TECH TALK</title>
+		<title>Tech Talk</title>
         
 		<link rel="stylesheet" href="css/chat-style.css">
         <style>
@@ -28,7 +28,27 @@
             #logout{
                 visibility:hidden;
             }
+            #admin-portal{
+                visibility:hidden;
+            }
+            #admin{
+                visibility:hidden;
+            }
+            #cngpsswd{
+                visibility:hidden;
+            }
+            th{background-color: navy;
+                color:darkred;}
+            td{background-color:white;
+                color:black;}
+            th, td {padding: 5px;}
+            h1{text-align:center;
+                color:white;}
             
+            table, th, td {
+                border: 1px solid #000000;
+                border-collapse: collapse;
+            }
         </style>
 		<script>
             //Fields
@@ -44,6 +64,9 @@
             var permUser;
             var count;
             var logout;
+            var ap;
+            var admin;
+            var psswd;
 			//Onload event
 			window.onload = init;
             /**
@@ -62,7 +85,10 @@
                 user=document.getElementById("username");
                 pass=document.getElementById("password");
                 logout=document.getElementById("logout");
+                ap=document.getElementById("admin-portal");
+                admin=document.getElementById("admin");
                 count=0;
+                psswd=document.getElementById("cngpsswd");
                 welcome();
 			}
 //**********************REQUEST FUNCTIONS*****************************************
@@ -143,6 +169,20 @@
                 req.responseType="json";
                 req.send();
             }
+            
+            function getAdmin(){
+                req=new XMLHttpRequest();
+                req.open("GET", "https://cs.hiram.edu/~italianoaj/rest/admin");
+                req.addEventListener("load", showAdmin);
+                req.setRequestHeader("Content-Type","application/json");
+                req.responseType="json";
+                req.send();
+            }
+            
+            function delUser(){
+                console.log("delete");
+            }
+                
 //**********************CALLBACK FUNCTIONS*****************************************
             /**
             *This function will display the messages recieved from the sever properly.
@@ -175,6 +215,10 @@
                     cr.style.visibility="visible";
                     mf.style.visibility="visible";
                     logout.style.visibility="visible";
+                    psswd.style.visibility="visible";
+                    if(req.response.admin==true){
+                        admin.style.visibility="visible";
+                    }
                     window.setInterval(getMessages, 1000);
                 }else{
                     logout.style.visibility="hidden";
@@ -188,8 +232,8 @@
             *Much like my previous project, this function essentially does nothing at all.
             *However, I like to have call back functions for all of my requests for the 
             *purpose of future development. Please be gentle with this little chunk, he's
-            *just a small little method, barely even 4 lines. Maybe one day hell be a great
-            *big STRONG method...
+            *just a small little method, barely even 4 lines. Maybe one day he'll be a 
+            *great, big, STRONG method...
             *@author italianoaj
             **/
             function messageSent(){
@@ -215,13 +259,44 @@
 					suffix="pm";
 				}
 				cr.innerHTML+="<div class='container darker'><p>Administrator-Bot</p><img id='admin' src='img/adminbot.jpg' alt='avatar' style='float: left; max-width: 60px; width: 100%; margin-right: 20px; border-radius: 50%;'><p>You can type a message to the group in the space provided below. You can then send the message by clicking the send button. Beep-Boop-Beep *insert other helpful information here.</p><span class='time-left'>"+time.getHours()+":"+prefix+time.getMinutes()+""+suffix+"</span></div>";
+                cr.scrollTop = cr.scrollHeight;
+            }
+            
+            function showAdmin(){
+                var table=document.getElementById("body");
+                table.innerHTML="";
+                for(var i=0; i<req.response.length; i++){
+                    var row=document.createElement("tr");
+                    var uName=document.createElement("td");
+                    var txt1=document.createTextNode(req.response[i].username);
+                    uName.appendChild(txt1);
+                    row.appendChild(uName);
+                    var passwd=document.createElement("td");
+                    var txt2=document.createTextNode(req.response[i].password);
+                    passwd.appendChild(txt2);
+                    row.appendChild(passwd);
+                    var uType=document.createElement("td");
+                    var txt3=document.createTextNode(req.response[i].type);
+                    uType.appendChild(txt3);
+                    row.appendChild(uType);
+                    var del=document.createElement("td");
+                    var btn=document.createElement("button");
+                    btn.innerHTML="DELETE";
+                    btn.addEventListener("click", delUser);
+                    del.appendChild(btn);
+                    row.appendChild(del);
+                    table.appendChild(row);
+                }
+                ap.style.visibility="visible";
             }
 		</script>
 	</head>
 	<body>
 		<div class="navbar">
             <a href="">Tech Talk</a>
-            <a id="logout" href="" onclick="location.reload();"> logout</a>
+            <button id="logout" onclick="location.reload();"> Logout</button>
+            <button id="cngpsswd"> Change My Password</button>
+            <button id="admin" onclick="getAdmin();"> Admin Portal</button>
             <p>Instant Messenging for Hiram CPSC Students</p>
         </div>
         <br>
@@ -245,5 +320,18 @@
                 <input type="button" value="HELP" onclick="help();">
 			</form>
 		</div>
+        <div id="admin-portal">
+            <h1>Admin Portal</h1>
+            <table>
+                <thead>
+                    <th>User</th>
+                    <th>Password</th>
+                    <th>Type</th>
+                    <th>Action</th>
+                </thead>
+                <tbody id="body">
+                </tbody>
+            </table>
+        </div>
 	</body>
 </html>

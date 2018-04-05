@@ -8,14 +8,17 @@ var bodyParser=require('body-parser');
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}));
 app.set('view engine', 'ejs');
-var users = [{"username":"admin", "password":"Welcome123"}, {"username":"bowsera","password":"0000"}, {"username":"wojtowiczak","password":"0001"}, {"username":"italianoaj","password":"Ant@Ita1"}, {"username":"barbianbm","password":"0002"}, {"username":"rozalskiji","password":"0003"}, {"username":"whitekj","password":"0004"}, {"username":"hendersonl","password":"0005"}, {"username":"oliphantlt","password":"0006"}, {"username":"ikedam","password":"0007"}, {"username":"bountsebese","password":"0008"}, {"username":"nouafowankosj","password":"0009"}, {"username":"topaliant","password":"0010"}, {"username":"martinjakozd","password":"0011"}];
+var users = [{"username":"admin", "password":"Welcome123", "type":"admin"}, {"username":"bowsera","password":"0000", "type":"user"}, {"username":"wojtowiczak","password":"0001", "type":"user"}, {"username":"italianoaj","password":"Ant@Ita1", "type":"user"}, {"username":"barbianbm","password":"0002", "type":"user"}, {"username":"rozalskiji","password":"0003", "type":"user"}, {"username":"whitekj","password":"0004", "type":"user"}, {"username":"hendersonl","password":"0005", "type":"user"}, {"username":"oliphantlt","password":"0006", "type":"user"}, {"username":"ikedam","password":"0007", "type":"user"}, {"username":"bountsebese","password":"0008", "type":"user"}, {"username":"nouafowankosj","password":"0009", "type":"user"}, {"username":"topaliant","password":"0010", "type":"user"}, {"username":"martinjakozd","password":"0011", "type":"user"}];
 
 
 app.get('/', (req,res) => {
     res.render('index.ejs');
 });
 
-
+app.get('/admin', (req,res) => {
+    res.send(JSON.stringify(users));
+});
+             
 app.get('/messages', (req,res) => {
      db.collection('testMessages').find().toArray(function(err, results) {
           var obj = {testMessages: results};
@@ -58,9 +61,16 @@ app.post('/login', (req, res) => {
     for (var i=0; i<users.length; i++){
         if(req.body.username==users[i].username && req.body.password==users[i].password){
             console.log("login attempt successful");
-            var obj={"login":true};
-            res.send(JSON.stringify(obj));
-            res.end();
+            if(users[i].type=="admin"){
+                var obj={"login":true, "admin":true};
+                res.send(JSON.stringify(obj));
+                res.end();
+                return;
+            }else{  
+                var obj={"login":true, "admin":false};
+                res.send(JSON.stringify(obj));
+                res.end();
+            }
         }  
     }
     if(obj){
