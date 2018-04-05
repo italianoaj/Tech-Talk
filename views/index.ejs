@@ -3,11 +3,14 @@
 	<head>
         <meta charset="utf-8">
         <meta name="author" content="Anthony Italiano">
-        <meta name="description" content="address book">
-        <meta name="keywords" content="name, email, address, phone, state, city, zip">
+        <meta name="description" content="chat room">
+        <meta name="keywords" content="Hiram, College, Chat, Tech, Talk, Tech Talk, Italiano">
+        
 		<title>HC TECH TALK</title>
+        
 		<link rel="stylesheet" href="css/chat-style.css">
         <style>
+            
             #retry{
                 visibility:hidden;
                 color:navy;
@@ -25,8 +28,10 @@
             #logout{
                 visibility:hidden;
             }
+            
         </style>
 		<script>
+            //Fields
 			var cr;
 			var mess;
 			var time;
@@ -39,9 +44,13 @@
             var permUser;
             var count;
             var logout;
-			
+			//Onload event
 			window.onload = init;
-		
+            /**
+            *This function allows for variables to be filled upon completion of the page
+            *loading.
+            *@author italianoaj
+            **/
 			function init(){
 				cr=document.getElementById("chat-room");
 				mess=document.getElementById("message");
@@ -56,7 +65,12 @@
                 count=0;
                 welcome();
 			}
-            
+//**********************REQUEST FUNCTIONS*****************************************
+            /**
+            *This function creates the welcome message that appears from the administrator-
+            *bot when the user enters the chat-room.
+            *@author italianoaj
+            **/
             function welcome(){
                 var suffix;
 				var prefix;
@@ -73,7 +87,10 @@
 				}
                 cr.innerHTML+="<div class='container darker'><p>Administrator-Bot</p><img id='admin' src='img/adminbot.jpg' alt='avatar' style='float: left; max-width: 60px; width: 100%; margin-right: 20px; border-radius: 50%;'><p>Welcome to the Chatroom!</p><span class='time-left'>"+time.getHours()+":"+prefix+time.getMinutes()+""+suffix+"</span></div>"
             }
-            
+            /**
+            *This function will send a login request over to the web server.
+            *@author italianoaj
+            **/
             function signin(){
                 req = new XMLHttpRequest();
                 req.open("POST", "https://cs.hiram.edu/~italianoaj/rest/login");
@@ -85,7 +102,10 @@
                 req.responseType="json";
                 req.send(JSON.stringify(obj));
             }
-
+            /**
+            *This function sends messages to the database on the server.
+            *@author italianoaj
+            **/
 			function send(form){
                 var suffix;
                 var prefix;
@@ -111,7 +131,10 @@
                 req.responseType="json";
                 req.send(JSON.stringify(obj));
 			}
-            
+            /**
+            *This function asks for messages from the server.
+            *@author italianoaj
+            **/
             function getMessages(){
                 req=new XMLHttpRequest();
                 req.open("GET", "https://cs.hiram.edu/~italianoaj/rest/messages");
@@ -120,7 +143,11 @@
                 req.responseType="json";
                 req.send();
             }
-            
+//**********************CALLBACK FUNCTIONS*****************************************
+            /**
+            *This function will display the messages recieved from the sever properly.
+            *@author italianoaj
+            **/
             function displayMessages(){
                 if (count==req.response.testMessages.length){
                     return;
@@ -133,9 +160,13 @@
                         cr.innerHTML+="<div class='container darker'><p>"+req.response.testMessages[i].username+"</p><img id='user' src='img/user.png' alt='avatar' style='float: left; max-width: 60px; width: 100%; margin-right: 20px; border-radius: 50%;'><p>"+req.response.testMessages[i].message+"</p><span class='time-left'>"+req.response.testMessages[i].time+"</span></div>"
                     }
                 }
+                cr.scrollTop = cr.scrollHeight;
                 count=req.response.testMessages.length;
             }
-            
+            /**
+            *This function sets up the display of the page based on the login information.
+            *@author italianoaj
+            **/
             function access(){
                 console.log("hello");
                 if(req.response.login==true){
@@ -153,12 +184,22 @@
                     mf.style.visibility="hidden";
                 }
             }
-            
+            /**
+            *Much like my previous project, this function essentially does nothing at all.
+            *However, I like to have call back functions for all of my requests for the 
+            *purpose of future development. Please be gentle with this little chunk, he's
+            *just a small little method, barely even 4 lines. Maybe one day hell be a great
+            *big STRONG method...
+            *@author italianoaj
+            **/
             function messageSent(){
                 console.log("got back data");
                 console.log(req.response);
             }
-            
+            /**
+            *This function displays the help message from the administrator-bot.
+            *@author italianoaj
+            **/
             function help(){
                 var suffix;
 				var prefix;
