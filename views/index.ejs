@@ -67,6 +67,7 @@
             var ap;
             var admin;
             var psswd;
+            var users= [];
 			//Onload event
 			window.onload = init;
             /**
@@ -180,7 +181,28 @@
             }
             
             function delUser(){
-                console.log("delete");
+                var numba=prompt("Please enter the number of the user you want to delete:", "-1");
+                console.log(users[numba]);
+                req=new XMLHttpRequest();
+                req.open("DELETE", "https://cs.hiram.edu/~italianoaj/rest/users");
+                req.addEventListener("load", showAdmin);
+                req.setRequestHeader("Content-Type","application/json");
+                var obj = {"index":numba}
+                req.responseType="json";
+                req.send(JSON.stringify(obj));
+            }
+            
+            function makeUser(){
+                var username=prompt("Please enter the username of the new account:", "<username>");
+                var password=prompt("Please enter the password of the new account:", "<password>");
+                var type=prompt("Please specify if this is an admin account. If so, type 'admin' otherwise leave as is:", "user");
+                req=new XMLHttpRequest();
+                req.open("POST", "https://cs.hiram.edu/~italianoaj/rest/users");
+                req.addEventListener("load", showAdmin);
+                req.setRequestHeader("Content-Type","application/json");
+                var obj = {"username":username, "password":password, "type":type}
+                req.responseType="json";
+                req.send(JSON.stringify(obj));
             }
                 
 //**********************CALLBACK FUNCTIONS*****************************************
@@ -265,8 +287,14 @@
             function showAdmin(){
                 var table=document.getElementById("body");
                 table.innerHTML="";
+                
                 for(var i=0; i<req.response.length; i++){
+                    users.push(req.response[i]);
                     var row=document.createElement("tr");
+                    var num=document.createElement("td");
+                    var txt=document.createTextNode(i);
+                    num.appendChild(txt);
+                    row.appendChild(num);
                     var uName=document.createElement("td");
                     var txt1=document.createTextNode(req.response[i].username);
                     uName.appendChild(txt1);
@@ -279,12 +307,6 @@
                     var txt3=document.createTextNode(req.response[i].type);
                     uType.appendChild(txt3);
                     row.appendChild(uType);
-                    var del=document.createElement("td");
-                    var btn=document.createElement("button");
-                    btn.innerHTML="DELETE";
-                    btn.addEventListener("click", delUser);
-                    del.appendChild(btn);
-                    row.appendChild(del);
                     table.appendChild(row);
                 }
                 ap.style.visibility="visible";
@@ -324,14 +346,16 @@
             <h1>Admin Portal</h1>
             <table>
                 <thead>
+                    <th>Number</th>
                     <th>User</th>
                     <th>Password</th>
                     <th>Type</th>
-                    <th>Action</th>
                 </thead>
                 <tbody id="body">
                 </tbody>
             </table>
+            <button id="dUser" onclick="delUser()">Delete Account</button>
+            <button id="aUser" onclick="makeUser()">Create Account</button>
         </div>
 	</body>
 </html>
