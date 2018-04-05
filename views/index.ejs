@@ -5,7 +5,7 @@
         <meta name="author" content="Anthony Italiano">
         <meta name="description" content="address book">
         <meta name="keywords" content="name, email, address, phone, state, city, zip">
-		<title>Dev Stage 1</title>
+		<title>HC TECH TALK</title>
 		<link rel="stylesheet" href="css/chat-style.css">
         <style>
             #retry{
@@ -36,6 +36,7 @@
             var permUser;
 			
 			window.onload = init;
+            window.setInterval(getMessages, 1000);
 		
 			function init(){
 				cr=document.getElementById("chat-room");
@@ -80,15 +81,51 @@
             }
 
 			function send(form){
+                var suffix;
+                var prefix;
+
+                time = new Date();
+                if(time.getMinutes()<10){
+                    prefix="0";
+                }else{
+                    prefix="";
+                }
+                if(time.getHours()<12){
+                    suffix="am";
+                }else{
+                    suffix="pm";
+                }
+                var sent=time.getHours()+":"+prefix+time.getMinutes()+""+suffix;
 				req=new XMLHttpRequest();
                 req.open("POST", "https://cs.hiram.edu/~italianoaj/rest/sendMessage");
                 req.addEventListener("load", messageSent);
-                var obj = {"username":permUser, "message":mess.value};
+                var obj = {"username":permUser, "message":mess.value, "time":sent};
                 console.log(obj);
                 req.setRequestHeader("Content-Type","application/json");
                 req.responseType="json";
                 req.send(JSON.stringify(obj));
 			}
+            
+            function getMessages(){
+                console.log("asking for messages");
+                req=new XMLHttpRequest();
+                req.open("GET", "https://cs.hiram.edu/~italianoaj/rest/messages");
+                req.addEventListener("load", displayMessages);
+                req.setRequestHeader("Content-Type","application/json");
+                
+                req.responseType="json";
+                req.send();
+            }
+            
+            function displayMessages(){
+                for(var i=0; i<req.response.testMessages.length; i++){
+                    if(req.response.testMessages[i].username==permUser){
+                        continue;
+                    }else{
+                        console.log(req.response.testMessages.message);
+                    }
+                }
+            }
             
             function access(){
                 console.log("hello");
@@ -146,6 +183,14 @@
             <p>Try that again<p>
         </div>
 		<div id="chat-room">
+            <% for(var i=0; i<testMessages.length; i++) { %>
+                <div class='container darker'>
+                    <p><%= testMessages[i].username%></p>
+                    <img id='user' src='img/user.png' alt='avatar' style='float: left; max-width: 60px; width: 100%; margin-right: 20px; border-radius: 50%;'>
+                    <p><%= testMessages[i].message %></p>
+                    <span class ='time-left'><%= testMessages[i].time %></span>
+                </div>
+             <% } %>            
 		</div>
 		<br><br><br>
 		<div id="message-form">
