@@ -19,7 +19,6 @@ app.get('/', (req,res) => {
 
 
 app.get('/messages', (req,res) => {
-    console.log("Yes i see you asking for messages");
      db.collection('testMessages').find().toArray(function(err, results) {
           var obj = {testMessages: results};
           res.send(JSON.stringify(obj));
