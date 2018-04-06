@@ -62,6 +62,7 @@
             var mf;
             var login
             var permUser;
+            var myType;
             var count;
             var logout;
             var ap;
@@ -167,7 +168,10 @@
                 req.responseType="json";
                 req.send();
             }
-            
+            /**
+            *This function sedns the request for admin-only information AKA top secret.
+            *@author italianoaj
+            **/
             function getAdmin(){
                 req=new XMLHttpRequest();
                 req.open("GET", "https://cs.hiram.edu/~italianoaj/rest/admin");
@@ -176,7 +180,10 @@
                 req.responseType="json";
                 req.send();
             }
-            
+            /**
+            *This function sends the request to delete an account.
+            *@author italianoaj
+            **/
             function delUser(){
                 var numba=prompt("Please enter the number of the user you want to delete:", "-1");
                 req=new XMLHttpRequest();
@@ -187,7 +194,10 @@
                 req.responseType="json";
                 req.send(JSON.stringify(obj));
             }
-            
+            /**
+            *This function sends the request when an admin wants to create a new user.
+            *@author italianoaj
+            **/
             function makeUser(){
                 var username=prompt("Please enter the username of the new account:", "<username>");
                 var password=prompt("Please enter the password of the new account:", "<password>");
@@ -200,9 +210,13 @@
                 req.responseType="json";
                 req.send(JSON.stringify(obj));
             }
-            
+            /**
+            *This is the function that handles all users changing their passwords.
+            *@author italianoaj
+            **/
             function changePsswd(){
                 var password=prompt("Please enter your new password:", "<password>");
+                window.alert("Your password has been changed");
                 req=new XMLHttpRequest();
                 req.open("PUT", "https://cs.hiram.edu/~italianoaj/rest/users");
                 req.addEventListener("load", showAdmin);
@@ -237,6 +251,7 @@
             *@author italianoaj
             **/
             function access(){
+                myType=req.response.admin;
                 if(req.response.login==true){
                     login.style.display="none";
                     retry.style.display="none";
@@ -289,11 +304,13 @@
 				cr.innerHTML+="<div class='container darker'><p>Administrator-Bot</p><img id='admin' src='img/adminbot.jpg' alt='avatar' style='float: left; max-width: 60px; width: 100%; margin-right: 20px; border-radius: 50%;'><p>You can type a message to the group in the space provided below. You can then send the message by clicking the send button. Beep-Boop-Beep *insert other helpful information here.</p><span class='time-left'>"+time.getHours()+":"+prefix+time.getMinutes()+""+suffix+"</span></div>";
                 cr.scrollTop = cr.scrollHeight;
             }
-            
+            /**
+            *This function handles responses from user-specific requests to update the user table in the admin portal.
+            *@author italianoaj
+            **/
             function showAdmin(){
                 var table=document.getElementById("body");
-                table.innerHTML="";
-                
+                table.innerHTML="";         
                 for(var i=0; i<req.response.length; i++){
                     users.push(req.response[i]);
                     var row=document.createElement("tr");
@@ -315,7 +332,9 @@
                     row.appendChild(uType);
                     table.appendChild(row);
                 }
-                ap.style.visibility="visible";
+                if(myType){
+                    ap.style.visibility="visible";
+                }
             }
 		</script>
 	</head>
