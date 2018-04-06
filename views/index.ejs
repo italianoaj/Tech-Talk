@@ -81,7 +81,6 @@
                 login=document.getElementById("login");
                 retry=document.getElementById("retry");
                 mf=document.getElementById("message-form");
-				console.log(window.screen.width);
 				mess.style.width=window.screen.width-30+"px";
                 user=document.getElementById("username");
                 pass=document.getElementById("password");
@@ -125,7 +124,6 @@
                 var obj = {"username":user.value,"password":pass.value};
                 permUser=user.value;
                 req.setRequestHeader("Content-Type", "application/json");
-                console.log(JSON.stringify(obj));
                 req.responseType="json";
                 req.send(JSON.stringify(obj));
             }
@@ -153,7 +151,6 @@
                 req.open("POST", "https://cs.hiram.edu/~italianoaj/rest/sendMessage");
                 req.addEventListener("load", messageSent);
                 var obj = {"username":permUser, "message":mess.value, "time":sent};
-                console.log(obj);
                 req.setRequestHeader("Content-Type","application/json");
                 req.responseType="json";
                 req.send(JSON.stringify(obj));
@@ -182,7 +179,6 @@
             
             function delUser(){
                 var numba=prompt("Please enter the number of the user you want to delete:", "-1");
-                console.log(users[numba]);
                 req=new XMLHttpRequest();
                 req.open("DELETE", "https://cs.hiram.edu/~italianoaj/rest/users");
                 req.addEventListener("load", showAdmin);
@@ -201,6 +197,17 @@
                 req.addEventListener("load", showAdmin);
                 req.setRequestHeader("Content-Type","application/json");
                 var obj = {"username":username, "password":password, "type":type}
+                req.responseType="json";
+                req.send(JSON.stringify(obj));
+            }
+            
+            function changePsswd(){
+                var password=prompt("Please enter your new password:", "<password>");
+                req=new XMLHttpRequest();
+                req.open("PUT", "https://cs.hiram.edu/~italianoaj/rest/users");
+                req.addEventListener("load", showAdmin);
+                req.setRequestHeader("Content-Type","application/json");
+                var obj = {"username":permUser, "password":password}
                 req.responseType="json";
                 req.send(JSON.stringify(obj));
             }
@@ -230,7 +237,6 @@
             *@author italianoaj
             **/
             function access(){
-                console.log("hello");
                 if(req.response.login==true){
                     login.style.display="none";
                     retry.style.display="none";
@@ -317,7 +323,7 @@
 		<div class="navbar">
             <a href="">Tech Talk</a>
             <button id="logout" onclick="location.reload();"> Logout</button>
-            <button id="cngpsswd"> Change My Password</button>
+            <button id="cngpsswd" onclick="changePsswd();"> Change My Password</button>
             <button id="admin" onclick="getAdmin();"> Admin Portal</button>
             <p>Instant Messenging for Hiram CPSC Students</p>
         </div>
